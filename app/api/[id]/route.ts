@@ -1,17 +1,22 @@
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } },
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { userId } = await auth();
 
-  if (!userId) return new Response("Unauthorized", { status: 401 });
+  if (!userId) {
+    return new NextResponse("Unauthorized", { status: 401 });
+  }
+
+  const { id } = await params;
 
   const quiz = await prisma.quiz.findFirst({
     where: {
-      id: params.id,
+      id,
       userId,
     },
     include: {
@@ -19,5 +24,9 @@ export async function GET(
     },
   });
 
-  return Response.json(quiz);
+  if (!quiz) {
+    return new NextResponse("Quiz not found", { status: 404 });
+  }
+
+  return NextResponse.json(quiz);
 }
