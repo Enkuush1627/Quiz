@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import prisma from "@/lib/prisma";
+import { getPrisma } from "@/lib/prisma";
 
 export async function GET(
   request: NextRequest,
@@ -13,6 +13,9 @@ export async function GET(
   }
 
   const { id } = await params;
+
+  // 👇 Prisma-г энд instantiate хийнэ
+  const prisma = getPrisma();
 
   const quiz = await prisma.quiz.findFirst({
     where: {
