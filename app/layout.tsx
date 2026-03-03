@@ -11,6 +11,8 @@ import "./globals.css";
 
 import { PropsWithChildren } from "react";
 import { AppSidebar, Header } from "./_components";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,12 +37,18 @@ const RootLayout = ({ children }: PropsWithChildren) => {
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <SignedOut>
-            <SignInButton />
-            <SignUpButton>
-              <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
-                Sign Up
-              </button>
-            </SignUpButton>
+            <div className="flex justify-center items-center h-screen">
+              <Card className="w-68 bg-gray-50 h-36 items-center justify-center">
+                <CardContent className="flex w-full flex-col gap-4">
+                  <SignInButton />
+                  <SignUpButton>
+                    <Button className="bg-black w-full text-white rounded-lg font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
+                      Sign Up
+                    </Button>
+                  </SignUpButton>
+                </CardContent>
+              </Card>
+            </div>
           </SignedOut>
 
           <SignedIn>
