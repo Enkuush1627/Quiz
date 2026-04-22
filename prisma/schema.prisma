@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL") 
 }
 
 model Quiz {
@@ -20,7 +21,7 @@ model Question {
   id       String   @id @default(uuid())
   quizId   String
   question String
-  answers  String[]
+  answers  Json
   correct  String
   quiz     Quiz     @relation(fields: [quizId], references: [id])
 }

@@ -1,12 +1,13 @@
 import { auth } from "@clerk/nextjs/server";
-import { getPrisma } from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
     const { userId } = await auth();
-    if (!userId) return new Response("Unauthorized", { status: 401 });
 
-    const prisma = getPrisma(); // 👈 энд авна
+    if (!userId) {
+      return new Response("Unauthorized", { status: 401 });
+    }
 
     const quizzes = await prisma.quiz.findMany({
       where: { userId },

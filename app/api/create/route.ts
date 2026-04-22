@@ -1,6 +1,6 @@
+import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { GoogleGenAI } from "@google/genai";
-import { getPrisma } from "@/lib/prisma";
 
 const apiKey = process.env.GEMINI_API_KEY;
 
@@ -15,8 +15,6 @@ export async function POST(request: Request) {
   try {
     const { userId } = await auth();
     if (!userId) return new Response("Unauthorized", { status: 401 });
-
-    const prisma = getPrisma();
 
     const { title, content } = await request.json();
 
@@ -98,8 +96,17 @@ async function generateSummary(contents: string) {
       .replace(/```/g, "")
       .trim();
 
-    return JSON.parse(cleaned);
-  } catch (error) {
+    const match = cleaned.match(/\{[\s\S]*\}/);
+    if (!match) return null;
+
+    return JSON.parse(match[0]);
+  } catch (error: any) {
+    if (error?.status === 503) {
+      console.log("Retrying Gemini...");
+      await new Promise((res) => setTimeout(res, 2000));
+      return generateSummary(contents);
+    }
+
     console.error("Gemini parse error:", error);
     return null;
   }

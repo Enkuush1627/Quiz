@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { getPrisma } from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: { id: string } },
 ) {
   const { userId } = await auth();
 
@@ -13,9 +13,6 @@ export async function GET(
   }
 
   const { id } = await params;
-
-  // 👇 Prisma-г энд instantiate хийнэ
-  const prisma = getPrisma();
 
   const quiz = await prisma.quiz.findFirst({
     where: {
